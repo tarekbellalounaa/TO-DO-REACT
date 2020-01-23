@@ -1,20 +1,29 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import { render } from "@testing-library/react";
 import uuid from "uuid";
-import Add from 'Add.js';
+
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       input: "",
-      todos:[],
+      todos: []
     };
   }
+  Comp = id => {
+    this.setState({
+      todos: this.state.todos.map(el =>
+        el.id === id ? { ...el, complete:!el.complete } : el 
+      )
+    });
+  };
+  Del = id => {
+    this.setState({ todos: this.state.todos.filter(el => el.id !== id) });
+  };
   add = e => {
     let newtodo = { text: this.state.input, id: uuid(), complete: false };
-this.setState({ todos : todos.concat(newtodo)})
+    this.setState({ todos: this.state.todos.concat(newtodo) , input:""});
   };
 
   handleChange = e => {
@@ -33,8 +42,10 @@ this.setState({ todos : todos.concat(newtodo)})
               type="text"
               name="input"
               placeholder="Enter new task "
+              value={this.state.input}
             />
-            <input onClick={this.add}
+            <input
+              onClick={this.add}
               className="addbutton"
               type="button"
               name="addition"
@@ -45,8 +56,27 @@ this.setState({ todos : todos.concat(newtodo)})
         <div>
           <p className="motivation">Let's get some work done !</p>
         </div>
-              <Add todos={this.state.todos}/>
+        {this.state.todos.map(el => (
+          <div className="affichage">
+          <div className="buttons">
+            <input
+              onClick={() => this.Comp(el.id)}
+              className="completebutt"
+              type="button"
+              value={el.complete ? "Undo" : "Complete"}
+            />
+
+            <input
+              onClick={() => this.Del(el.id)}
+              className="deletebutt"
+              type="button"
+              value="Delete"
+            />
+            </div>
+           <p className={el.complete?"undo" : "complete"}> {el.text} </p>
           </div>
+        ))}
+      </div>
     );
   }
 }
